@@ -24,6 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'calculate_angle = lidar_processor.calculate_angle:main',
         ],
     },
 )

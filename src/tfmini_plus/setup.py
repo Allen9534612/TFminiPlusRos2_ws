@@ -24,6 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'tfmini_pub = tfmini_plus.tfmini_pub:main',
         ],
     },
 )
