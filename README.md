@@ -48,12 +48,12 @@ sudo usermod -a -G dialout $USER
 
 啟動硬體讀取 (Publisher)
 ```bash
-ros2 run tfmini_plus tfmini_publisher
+ros2 run tfmini_plus tfmini_pub
 ```
 
 啟動角度計算 (Calculator)
 ```bash
-ros2 run lidar_processor angle_calculator
+ros2 run lidar_processor calculate_angle
 ```
 
 ## 📐 數學運算原理
