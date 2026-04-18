@@ -13,7 +13,7 @@
 * **感測器**: TFmini Plus (UART 版本) x 4
 * **連線**: USB 轉 TTL 模組
 * **幾何配置**:
-    * **左側**: 前後各一個（間距 $L_{side}$）
+    * **右側**: 前後各一個（間距 $L_{side}$）
     * **前方**: 左右各一個（間距 $L_{front}$）
 
 
@@ -57,7 +57,7 @@ ros2 run lidar_processor calculate_angle
 ```
 
 ## 📐 數學運算原理
-### 系統透過兩點距離差 $\Delta d$ 與安裝間距 $L$，利用反正切函數計算夾角：
+### 系統透過兩點距離差 $\Delta d$ 與安裝間距 $L$，利用反餘弦函數計算夾角：
 $$ \theta = \arccos\left(\frac{d_{front} - d_{rear}}{L}\right) $$
 
 ## 📂 檔案結構
