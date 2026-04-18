@@ -10,10 +10,10 @@ class TFminiPublisher(Node):
         
         # 定義四個埠口與對應的 Topic 名稱
         self.port_configs = [
-            {'port': '/dev/ttyUSB0', 'topic': 'range/front_left',  'frame': 'lidar_fl'},
-            {'port': '/dev/ttyUSB1', 'topic': 'range/front_right', 'frame': 'lidar_fr'},
-            {'port': '/dev/ttyUSB2', 'topic': 'range/rear_left',   'frame': 'lidar_rl'},
-            {'port': '/dev/ttyUSB3', 'topic': 'range/rear_right',  'frame': 'lidar_rr'}
+            {'port': '/dev/ttyUSB0', 'topic': 'range/front_right',  'frame': 'lidar_fl'},
+            {'port': '/dev/ttyUSB1', 'topic': 'range/front_left', 'frame': 'lidar_fr'},
+            {'port': '/dev/ttyUSB2', 'topic': 'range/right_front',   'frame': 'lidar_rl'},
+            {'port': '/dev/ttyUSB3', 'topic': 'range/right_rear',  'frame': 'lidar_rr'}
         ]
         
         self.publishers_list = []

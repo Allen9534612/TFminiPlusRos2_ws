@@ -8,45 +8,60 @@ class MultiSideAngleCalculator(Node):
     def __init__(self):
         super().__init__('multi_angle_calculator')
         
-        # --- 機器人幾何參數 (公尺) ---
-        self.L_side = 0.4  # 左側前後雷達的間距
-        self.L_front = 0.3 # 前方左右雷達的間距
+        # --- 機器人幾何參數 ---
+        self.L_right = 0.17 # 右側前後雷達間距
+        self.L_front = 0.175  # 前方左右雷達間距
         
-        # 1. 建立四個訂閱者
+        # 暫存最新數據
+        self.data = {
+            'right': {'dist': 0.0, 'angle': 0.0}, # 改為 right
+            'front': {'dist': 0.0, 'angle': 0.0}
+        }
+        
+        # 1. 建立四個訂閱者 (依照你修改後的名稱)
         self.sub_fl = message_filters.Subscriber(self, Range, 'range/front_left')
-        self.sub_rl = message_filters.Subscriber(self, Range, 'range/rear_left')
         self.sub_fr = message_filters.Subscriber(self, Range, 'range/front_right')
-        # self.sub_rr = message_filters.Subscriber(self, Range, 'range/rear_right') # 如果右側也要算再開啟
+        self.sub_rf = message_filters.Subscriber(self, Range, 'range/right_front')
+        self.sub_rr = message_filters.Subscriber(self, Range, 'range/right_rear')
 
-        # 2. 建立同步器 - 左側組 (FL + RL)
-        self.ts_left = message_filters.ApproximateTimeSynchronizer(
-            [self.sub_fl, self.sub_rl], queue_size=10, slop=0.1)
-        self.ts_left.registerCallback(self.left_side_callback)
+        # 2. 建立同步器 - 右側組 (RF + RR) <-- 修正這裡的變數名稱
+        self.ts_right = message_filters.ApproximateTimeSynchronizer(
+            [self.sub_rf, self.sub_rr], 10, 0.1)
+        self.ts_right.registerCallback(self.right_side_callback)
 
         # 3. 建立同步器 - 前側組 (FL + FR)
         self.ts_front = message_filters.ApproximateTimeSynchronizer(
-            [self.sub_fl, self.sub_fr], queue_size=10, slop=0.1)
+            [self.sub_fl, self.sub_fr], 10, 0.1)
         self.ts_front.registerCallback(self.front_side_callback)
 
-        self.get_logger().info("多側邊角度監測已啟動...")
+        # 定時器刷新螢幕
+        self.timer = self.create_timer(0.2, self.timer_callback)
+
+        self.get_logger().info("多側邊角度監測已啟動 (右側 & 前方)...")
 
     def calculate_angle(self, d1, d2, L):
-        """ 基礎三角函數計算 """
-        return math.degrees(math.atan2(d1 - d2, L))
+        ratio = max(-1.0, min(1.0, (d1 - d2) / L))
+        return math.degrees(math.acos(ratio))
 
-    def left_side_callback(self, msg_fl, msg_rl):
-        """ 計算與左側牆壁的角度 """
-        angle = self.calculate_angle(msg_fl.range, msg_rl.range, self.L_side)
-        dist = (msg_fl.range + msg_rl.range) / 2.0
-        # 使用 get_logger 輸出，方便在終端機查看
-        self.get_logger().info(f"【左側牆】距離: {dist:.2f}m, 角度: {angle:6.2f}°")
+    def right_side_callback(self, msg_rf, msg_rr):
+        """ 計算與右側牆壁的角度 """
+        self.data['right']['angle'] = self.calculate_angle(msg_rf.range, msg_rr.range, self.L_right)
+        self.data['right']['dist'] = (msg_rf.range + msg_rr.range) / 2.0
 
     def front_side_callback(self, msg_fl, msg_fr):
         """ 計算與前方牆壁的角度 """
-        # 注意：前方角度通常是用來判斷機器人是否垂直於前牆
-        angle = self.calculate_angle(msg_fl.range, msg_fr.range, self.L_front)
-        dist = (msg_fl.range + msg_fr.range) / 2.0
-        self.get_logger().info(f"【前側牆】距離: {dist:.2f}m, 角度: {angle:6.2f}°")
+        self.data['front']['angle'] = self.calculate_angle(msg_fl.range, msg_fr.range, self.L_front)
+        self.data['front']['dist'] = (msg_fl.range + msg_fr.range) / 2.0
+
+    def timer_callback(self):
+        r_d = self.data['right']['dist']
+        r_a = self.data['right']['angle']
+        f_d = self.data['front']['dist']
+        f_a = self.data['front']['angle']
+        
+        self.get_logger().info(
+            f"R: {r_d:.2f}m, {r_a:5.1f}° | F: {f_d:.2f}m, {f_a:5.1f}°"
+        )
 
 def main():
     rclpy.init()
