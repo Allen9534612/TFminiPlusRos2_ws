@@ -24,12 +24,11 @@ class MultiSideAngleCalculator(Node):
         self.sub_rf = message_filters.Subscriber(self, Range, 'range/right_front')
         self.sub_rr = message_filters.Subscriber(self, Range, 'range/right_rear')
 
-        # 2. 建立同步器 - 右側組 (RF + RR) <-- 修正這裡的變數名稱
+        # 2. 建立同步器
         self.ts_right = message_filters.ApproximateTimeSynchronizer(
             [self.sub_rf, self.sub_rr], 10, 0.1)
         self.ts_right.registerCallback(self.right_side_callback)
 
-        # 3. 建立同步器 - 前側組 (FL + FR)
         self.ts_front = message_filters.ApproximateTimeSynchronizer(
             [self.sub_fl, self.sub_fr], 10, 0.1)
         self.ts_front.registerCallback(self.front_side_callback)
@@ -40,8 +39,7 @@ class MultiSideAngleCalculator(Node):
         self.get_logger().info("多側邊角度監測已啟動 (右側 & 前方)...")
 
     def calculate_angle(self, d1, d2, L):
-        ratio = max(-1.0, min(1.0, (d1 - d2) / L))
-        return math.degrees(math.acos(ratio))
+        pass
 
     def right_side_callback(self, msg_rf, msg_rr):
         """ 計算與右側牆壁的角度 """
