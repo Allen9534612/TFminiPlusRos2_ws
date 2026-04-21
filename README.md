@@ -58,7 +58,7 @@ ros2 run lidar_processor calculate_angle
 
 ## 📐 數學運算原理
 ### 系統透過兩點距離差 $\Delta d$ 與安裝間距 $L$，利用反餘弦函數計算夾角：
-$$ \theta = \arccos\left(\frac{d_{front} - d_{rear}}{L}\right) $$
+$$ \theta = \arctan\left(\frac{d_{front} - d_{rear}}{L}\right) $$
 
 ## 📂 檔案結構
  tfmini_publisher.py: 解析 TFmini 協議並發佈 Range 訊息。

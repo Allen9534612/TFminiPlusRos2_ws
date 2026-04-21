@@ -39,6 +39,8 @@ class MultiSideAngleCalculator(Node):
         self.get_logger().info("多側邊角度監測已啟動 (右側 & 前方)...")
 
     def calculate_angle(self, d1, d2, L):
+        """ 基礎三角函數計算 """
+        # return math.degrees(math.這邊要填什麼呢?(d1 - d2, L))
         pass
 
     def right_side_callback(self, msg_rf, msg_rr):
