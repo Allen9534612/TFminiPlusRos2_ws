@@ -40,8 +40,7 @@ class MultiSideAngleCalculator(Node):
 
     def calculate_angle(self, d1, d2, L):
         """ 基礎三角函數計算 """
-        # return math.degrees(math.這邊要填什麼呢?(d1 - d2, L))
-        pass
+        return math.degrees(math.atan2(d1 - d2, L))
 
     def right_side_callback(self, msg_rf, msg_rr):
         """ 計算與右側牆壁的角度 """
